@@ -1,0 +1,662 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lagunas de Estabilización — ENOHSa 11.10</title>
+<style>
+  :root {
+    --bg:#0f1a0f;--card:#162016;--card2:#1a2a1a;--border:#2e4a2e;
+    --green:#4caf50;--gd:#2e7d32;--gl:#a5d6a7;
+    --amber:#ffb300;--al:#ffe082;
+    --blue:#42a5f5;--bl:#bbdefb;
+    --red:#ef5350;
+    --text:#e8f5e9;--t2:#a5d6a7;--t3:#81c784;
+    --muted:#558b55;--tag:#1b3a1b;--warn:#ff8f00;--wbg:#1a1400;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:20px 16px 60px}
+  h1{text-align:center;font-size:1.4rem;font-weight:700;color:var(--gl);margin-bottom:4px}
+  .sub{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:20px;letter-spacing:.04em}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px;max-width:820px;margin-left:auto;margin-right:auto}
+  .ctitle{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .ctitle span{color:var(--green);font-size:1rem}
+  .sys-tabs{display:flex;gap:8px;margin-bottom:4px}
+  .sbtn{flex:1;padding:12px 8px;border:2px solid var(--border);border-radius:8px;background:var(--card2);color:var(--t2);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;line-height:1.3}
+  .sbtn:hover{border-color:var(--green)}
+  .sbtn.active{border-color:var(--green);background:#1e3c1e;color:var(--gl)}
+  .sbtn .ico{font-size:1.3rem;display:block;margin-bottom:3px}
+  .fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  label{font-size:.7rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
+  input,select{background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;padding:8px 10px;width:100%;transition:border-color .2s}
+  input:focus,select:focus{outline:none;border-color:var(--green)}
+  .unit{font-size:.66rem;color:var(--muted);margin-top:2px}
+  .slabel{grid-column:1/-1;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);padding-top:6px;border-top:1px solid var(--border);margin-top:4px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;max-width:820px;margin-left:auto;margin-right:auto}
+  .btn-p{background:var(--gd);color:#fff;border:none;border-radius:7px;padding:11px 28px;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s}
+  .btn-p:hover{background:var(--green)}
+  .btn-s{background:transparent;color:var(--amber);border:1px solid var(--amber);border-radius:7px;padding:10px 20px;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn-s:hover{background:#241a00}
+  #results{display:none;max-width:820px;margin:0 auto}
+  .tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;gap:2px}
+  .tab{padding:8px 13px;font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s;margin-bottom:-2px}
+  .tab:hover{color:var(--t2)}
+  .tab.active{color:var(--gl);border-bottom-color:var(--green)}
+  .tp{display:none}
+  .tp.active{display:block}
+  .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-bottom:12px}
+  .rc{background:var(--tag);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+  .rc.g{border-color:var(--green);background:#1b3a1b}
+  .rc.am{border-color:var(--amber);background:#1a1400}
+  .rc.bl{border-color:var(--blue);background:#0d1f33}
+  .rc.rd{border-color:var(--red);background:#1f0d0d}
+  .rl{font-size:.64rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .rv{font-size:1.18rem;font-weight:700;color:var(--text)}
+  .ru{font-size:.66rem;color:var(--muted);margin-top:2px}
+  .mb{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:12px}
+  .mt{font-size:.78rem;font-weight:700;color:var(--al);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+  .badge{font-size:.63rem;padding:2px 7px;border-radius:20px;font-weight:700;letter-spacing:.05em}
+  .be{background:#1b3a00;color:#b8f07c;border:1px solid #4a8a00}
+  .bv{background:#0d1f33;color:#90caf9;border:1px solid #1565c0}
+  .bh{background:#1f1200;color:#ffcc80;border:1px solid #8a4f00}
+  .bm{background:#1a0d33;color:#ce93d8;border:1px solid #6a1b9a}
+  .bt{background:#001f1f;color:#80deea;border:1px solid #006064}
+  .pc{background:#0d1a0d;border:2px solid var(--green);border-radius:10px;padding:16px;margin-top:14px}
+  .pt{font-size:.78rem;font-weight:700;color:var(--gl);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+  .ct{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
+  .ct th{background:var(--tag);color:var(--t2);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border)}
+  .ct td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+  .ct tr:hover td{background:var(--tag)}
+  .best{color:var(--green);font-weight:700}
+  .tag2{display:inline-block;font-size:.63rem;padding:2px 6px;border-radius:20px;font-weight:700;margin-left:4px;vertical-align:middle}
+  .tg{background:#1b3a00;color:#b8f07c;border:1px solid #4a8a00}
+  .tr{background:#1f0d0d;color:#ef9a9a;border:1px solid #c62828}
+  .ib{border-radius:7px;padding:9px 12px;font-size:.78rem;margin-top:9px;display:flex;gap:8px;align-items:flex-start}
+  .ib.g{background:#0d2b0d;border:1px solid #2e6b2e;color:var(--gl)}
+  .ib.am{background:var(--wbg);border:1px solid #6b4a00;color:var(--al)}
+  .ib.rd{background:#1f0d0d;border:1px solid #c62828;color:#ef9a9a}
+  .fb{background:#0a180a;border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-family:'Courier New',monospace;font-size:.76rem;color:var(--t3);margin:7px 0;white-space:pre-wrap}
+  hr.div{border:none;border-top:1px solid var(--border);margin:12px 0}
+  @media(max-width:500px){.sys-tabs{flex-direction:column}.fg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<h1>🌿 Lagunas de Estabilización</h1>
+<p class="sub">Dimensionamiento según ENOHSa 11.10 · Método Empírico + Modelos Analíticos</p>
+
+<div class="card">
+  <div class="ctitle"><span>⚙️</span> Tipo de sistema</div>
+  <div class="sys-tabs">
+    <div class="sbtn active" id="btnFac" onclick="setSistema('fac')">
+      <span class="ico">🟩</span>Facultativa Directa
+      <br><small style="color:var(--muted);font-weight:400">Laguna facultativa primaria</small>
+    </div>
+    <div class="sbtn" id="btnAus" onclick="setSistema('aus')">
+      <span class="ico">🟧🟩</span>Sistema Australiano
+      <br><small style="color:var(--muted);font-weight:400">Anaeróbica + Facultativa en serie</small>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ctitle"><span>📋</span> Datos de proyecto</div>
+  <div class="fg">
+    <div class="field"><label>Población (P)</label><input type="number" id="pop" value="5000" min="100"><div class="unit">habitantes</div></div>
+    <div class="field"><label>Carga unitaria (cu)</label><input type="number" id="cu" value="0.055" step="0.001" min="0.01"><div class="unit">kg DBO₅/hab·día</div></div>
+    <div class="field"><label>Caudal afluente (Q)</label><input type="number" id="Q" value="750" min="1"><div class="unit">m³/día</div></div>
+    <div class="field"><label>Temperatura (T)</label><input type="number" id="T" value="15" min="5" max="40"><div class="unit">°C — mes más frío</div></div>
+    <div class="field"><label>Conc. afluente (Sₐ)</label><input type="number" id="Sa" value="300" min="10"><div class="unit">mg/L DBO₅</div></div>
+    <div class="field"><label>Eficiencia requerida</label><input type="number" id="efT" value="80" min="10" max="99"><div class="unit">% remoción DBO₅ total</div></div>
+
+    <div class="slabel">Parámetros laguna facultativa</div>
+    <div class="field"><label>Prof. facultativa (H_fac)</label><input type="number" id="hF" value="1.80" step="0.05" min="1.5" max="2.2"><div class="unit">m (1.50–2.20 ENOHSa)</div></div>
+    <div class="field">
+      <label>CO_adm — método</label>
+      <select id="coM" onchange="toggleCO()">
+        <option value="mara">Correlación de Mara</option>
+        <option value="mgp">McGarry-Pescod</option>
+        <option value="manual">Manual</option>
+      </select>
+      <div class="unit">para empírico</div>
+    </div>
+    <div class="field" id="coMF" style="display:none"><label>CO_adm manual</label><input type="number" id="coMan" value="100" min="10"><div class="unit">kg DBO₅/ha·día</div></div>
+    <div class="field"><label>d₁ — dispersión (Thirumurthi)</label><input type="number" id="d1" value="0.3" step="0.05" min="0.05" max="2.0"><div class="unit">adim. (0.1–1.0 típico)</div></div>
+
+    <div class="slabel ana-only" style="display:none">Parámetros laguna anaeróbica</div>
+    <div class="field ana-only" style="display:none"><label>Prof. anaeróbica (H_ana)</label><input type="number" id="hA" value="3.50" step="0.1" min="3.0"><div class="unit">m (≥3.00 ENOHSa)</div></div>
+    <div class="field ana-only" style="display:none"><label>Carga volumétrica (Cv)</label><input type="number" id="cv" value="0.060" step="0.005" min="0.050" max="0.080"><div class="unit">kg DBO₅/m³·día (0.05–0.08)</div></div>
+    <div class="field ana-only" style="display:none"><label>Eficiencia anaeróbica</label><input type="number" id="efA" value="50" min="30" max="70"><div class="unit">% remoción en anaeróbica</div></div>
+    <div class="field ana-only" style="display:none"><label>TRH anaeróbica (empírico)</label><input type="number" id="tA" value="5" step="0.5" min="1"><div class="unit">días</div></div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-p" onclick="calcular()">▶ Calcular</button>
+  <button class="btn-s" onclick="ejemplo()">📖 Ejemplo ENOHSa</button>
+  <button class="btn-s" onclick="document.getElementById('results').style.display='none'">✕ Limpiar</button>
+</div>
+
+<div id="results">
+  <div class="card" style="margin-top:18px">
+    <div class="tabs" id="tabsRow"></div>
+    <div id="tabCont"></div>
+  </div>
+</div>
+
+<script>
+// ── estado ──
+let SIS='fac', R={};
+
+function setSistema(s){
+  SIS=s;
+  document.getElementById('btnFac').classList.toggle('active',s==='fac');
+  document.getElementById('btnAus').classList.toggle('active',s==='aus');
+  document.querySelectorAll('.ana-only').forEach(el=>el.style.display=s==='aus'?'':'none');
+}
+function toggleCO(){
+  document.getElementById('coMF').style.display=
+    document.getElementById('coM').value==='manual'?'':'none';
+}
+const v=id=>parseFloat(document.getElementById(id).value)||0;
+
+// ── CO_adm ──
+function coAdmMara(T){ return T>=10&&T<=20 ? 40*T-120 : 40*T-60; }
+function coAdmMGP(T){ return 60.29*Math.pow(1.0993,T); }
+function getCoAdm(T){
+  const m=document.getElementById('coM').value;
+  if(m==='mara') return coAdmMara(T);
+  if(m==='mgp')  return coAdmMGP(T);
+  return v('coMan');
+}
+
+// ── Modelos ──
+// Hermann-Gloyna: V = 0.035·Q·Sa·θ^(35-T), θ=1.085, E=90%
+function HG(Q,Sa,T){
+  const V=0.035*Q*Sa*Math.pow(1.085,35-T);
+  return {V, t:V/Q, Se:Sa*0.10};
+}
+
+// Marais-Shaw: KT=K0·θ^(T-35), K0=1.20, θ=1.085 (ENOHSa)
+function MS(Q,Sa,Se_obj,T){
+  const KT=1.20*Math.pow(1.085,T-35);
+  const t=(Sa/Se_obj-1)/KT;
+  return {t, V:Q*t, KT, Se:Se_obj};
+}
+
+// Thirumurthi (bisección)
+function TH(Q,Sa,Se_obj,T,d1){
+  const KT=0.17*Math.pow(1.044,T-20);
+  const ro=Se_obj/Sa;
+  function calc(t){
+    const a=Math.sqrt(1+4*KT*t*d1);
+    const num=4*a*Math.exp(1/(2*d1));
+    const den=Math.pow(1+a,2)*Math.exp(a/(2*d1))-Math.pow(1-a,2)*Math.exp(-a/(2*d1));
+    return num/den;
+  }
+  let lo=0.1,hi=500;
+  for(let i=0;i<80;i++){const mid=(lo+hi)/2; calc(mid)>ro?lo=mid:hi=mid;}
+  const t=(lo+hi)/2;
+  return {t, V:Q*t, KT, d1, Se:Se_obj};
+}
+
+// Vincent (anaeróbica): t=(Sa/Se-1)/(Kn·(Se/Sa)^n)
+function VIN(Q,Sa,Se_obj){
+  const Kn=38.5,n=3.6;
+  const ratio=Se_obj/Sa;
+  const t=(Sa/Se_obj-1)/(Kn*Math.pow(ratio,n));
+  return {t, V:Q*t, Kn, n, Se:Se_obj};
+}
+
+// ── CÁLCULO ──
+function calcular(){
+  const P=v('pop'),cu=v('cu'),Q=v('Q'),T=v('T'),Sa=v('Sa'),efT=v('efT'),hF=v('hF'),d1=v('d1');
+  const CO=P*cu;
+  const Se_obj=Sa*(1-efT/100);
+  const coAdm=getCoAdm(T);
+
+  R={P,cu,Q,T,Sa,Se_obj,efT,hF,d1,CO,coAdm,SIS};
+
+  if(SIS==='fac'){
+    // Empírico
+    const Semp=CO/coAdm*1e4, Vemp=Semp*hF;
+    // Analíticos
+    const hg=HG(Q,Sa,T); hg.S=hg.V/hF;
+    const ms=MS(Q,Sa,Se_obj,T); ms.S=ms.V/hF;
+    const th=TH(Q,Sa,Se_obj,T,d1); th.S=th.V/hF;
+    R.fac={emp:{S:Semp,V:Vemp,t:Vemp/Q,Se:Se_obj},hg,ms,th};
+
+  } else {
+    const hA=v('hA'),cvA=v('cv'),efA=v('efA'),tA=v('tA');
+    const Se_ana=Sa*(1-efA/100);
+    const CO_fac=CO*(1-efA/100);
+
+    // Anaeróbica
+    const Vac=CO/cvA, Sac=Vac/hA;         // empírico Cv
+    const Vat=Q*tA,   Sat=Vat/hA;          // empírico TRH
+    const vin=VIN(Q,Sa,Se_ana); vin.S=vin.V/hA; // Vincent
+
+    // Facultativa secundaria
+    const Sa2=Se_ana;
+    const Sfe=CO_fac/coAdm*1e4, Vfe=Sfe*hF; // empírico
+    const ms2=MS(Q,Sa2,Se_obj,T); ms2.S=ms2.V/hF;
+    const th2=TH(Q,Sa2,Se_obj,T,d1); th2.S=th2.V/hF;
+
+    R.aus={hA,cvA,efA,tA,Se_ana,CO_fac,Sa2,
+      ana_cv: {V:Vac,S:Sac,t:Vac/Q,Se:Se_ana},
+      ana_trh:{V:Vat,S:Sat,t:tA,  Se:Se_ana},
+      ana_vin: {...vin},
+      fac_emp:{V:Vfe,S:Sfe,t:Vfe/Q,Se:Se_obj},
+      fac_ms:  {...ms2},
+      fac_th:  {...th2},
+    };
+  }
+
+  buildUI();
+  const el=document.getElementById('results');
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── UI ──
+const TABS_FAC=['📊 Resumen','🟩 Facultativa','⚡ Paralelo (ENOHSa)','📐 Esquema'];
+const TABS_AUS=['📊 Resumen','🟧 Anaeróbica','🟩 Facultativa','⚡ Paralelo (ENOHSa)','📐 Esquema'];
+
+function buildUI(){
+  const tabs=SIS==='fac'?TABS_FAC:TABS_AUS;
+  document.getElementById('tabsRow').innerHTML=
+    tabs.map((t,i)=>`<div class="tab ${i===0?'active':''}" onclick="showTab(${i})">${t}</div>`).join('');
+  document.getElementById('tabCont').innerHTML=
+    tabs.map((t,i)=>`<div class="tp ${i===0?'active':''}" id="tp${i}">${buildPanel(i)}</div>`).join('');
+}
+function showTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.tp').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+function buildPanel(i){
+  if(SIS==='fac'){
+    return [renderResumenFac,renderFacDetail,renderParalelo,renderEsquema][i]();
+  } else {
+    return [renderResumenAus,renderAnaDetail,renderFacDetail,renderParaleloAus,renderEsquema][i]();
+  }
+}
+
+// ── helpers ──
+const f=(v,d=2)=>isFinite(v)&&v!=null?v.toFixed(d):'—';
+const ha=v=>(v/1e4).toFixed(3);
+const m2=v=>Math.round(v).toLocaleString();
+
+function rcell(label,val,unit,cls=''){
+  return `<div class="rc ${cls}"><div class="rl">${label}</div><div class="rv">${val}</div><div class="ru">${unit}</div></div>`;
+}
+
+// ── RESUMEN FAC ──
+function renderResumenFac(){
+  const f_=R.fac;
+  return `
+  <div class="rg">
+    ${rcell('Carga orgánica total',f(R.CO,1),'kg DBO₅/día')}
+    ${rcell('Concentración afluente',f(R.Sa,0),'mg/L DBO₅')}
+    ${rcell('Efluente requerido (Se)',f(R.Se_obj,1),`mg/L DBO₅ (${R.efT}%)`)}
+    ${rcell(`CO<sub>adm</sub> (${document.getElementById('coM').options[document.getElementById('coM').selectedIndex].text})`,f(R.coAdm,1),'kg DBO₅/ha·día — T='+R.T+'°C','g')}
+  </div>
+  <h3 style="color:var(--gl);font-size:.82rem;margin:10px 0 8px">Laguna Facultativa — Comparación de métodos</h3>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Volumen (m³)</th><th>Superficie</th><th>Se (mg/L)</th></tr>
+    <tr><td>Empírico CO<sub>adm</sub></td><td>${f(f_.emp.t)}</td><td>${m2(f_.emp.V)}</td>
+        <td><span class="best">${ha(f_.emp.S)} ha</span><br><small>${m2(f_.emp.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+    <tr><td>Hermann-Gloyna <span class="tag2 tg">E=90%</span></td><td>${f(f_.hg.t)}</td><td>${m2(f_.hg.V)}</td>
+        <td>${ha(f_.hg.S)} ha<br><small>${m2(f_.hg.S)} m²</small></td><td>${f(f_.hg.Se,1)}</td></tr>
+    <tr><td>Marais-Shaw</td><td>${f(f_.ms.t)}</td><td>${m2(f_.ms.V)}</td>
+        <td>${ha(f_.ms.S)} ha<br><small>${m2(f_.ms.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+    <tr><td>Thirumurthi (d₁=${R.d1})</td><td>${f(f_.th.t)}</td><td>${m2(f_.th.V)}</td>
+        <td>${ha(f_.th.S)} ha<br><small>${m2(f_.th.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+  </table>
+  <div class="ib am" style="margin-top:10px">⚠️ Hermann-Gloyna siempre asume E=90%. Use Marais-Shaw o Thirumurthi para eficiencias específicas.</div>`;
+}
+
+// ── RESUMEN AUS ──
+function renderResumenAus(){
+  const a=R.aus;
+  return `
+  <div class="rg">
+    ${rcell('Carga orgánica total',f(R.CO,1),'kg DBO₅/día')}
+    ${rcell('Sa afluente',f(R.Sa,0),'mg/L DBO₅')}
+    ${rcell('Se objetivo',f(R.Se_obj,1),`mg/L DBO₅ (${R.efT}%)`)}
+    ${rcell(`CO<sub>adm</sub> fac.`,f(R.coAdm,1),'kg DBO₅/ha·día','g')}
+  </div>
+  <h3 style="color:var(--al);font-size:.82rem;margin:10px 0 8px">Laguna Anaeróbica</h3>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Volumen (m³)</th><th>Superficie</th><th>Se (mg/L)</th></tr>
+    <tr><td>Empírico Cv (${a.cvA} kg/m³·d)</td><td>${f(a.ana_cv.t)}</td><td>${m2(a.ana_cv.V)}</td>
+        <td>${ha(a.ana_cv.S)} ha<br><small>${m2(a.ana_cv.S)} m²</small></td><td>${f(a.Se_ana,1)}</td></tr>
+    <tr><td>Empírico TRH (${a.tA} días)</td><td>${f(a.tA)}</td><td>${m2(a.ana_trh.V)}</td>
+        <td>${ha(a.ana_trh.S)} ha<br><small>${m2(a.ana_trh.S)} m²</small></td><td>${f(a.Se_ana,1)}</td></tr>
+    <tr><td>Vincent (Kn=38.5, n=3.6) <span class="tag2 tr">VERIF</span></td><td>${f(a.ana_vin.t)}</td><td>${m2(a.ana_vin.V)}</td>
+        <td>${ha(a.ana_vin.S)} ha<br><small>${m2(a.ana_vin.S)} m²</small></td><td>${f(a.Se_ana,1)}</td></tr>
+  </table>
+  <h3 style="color:var(--gl);font-size:.82rem;margin:14px 0 8px">Laguna Facultativa (Sₐ=${f(a.Sa2,1)} mg/L)</h3>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Volumen (m³)</th><th>Superficie</th><th>Se (mg/L)</th></tr>
+    <tr><td>Empírico CO<sub>adm</sub></td><td>${f(a.fac_emp.t)}</td><td>${m2(a.fac_emp.V)}</td>
+        <td>${ha(a.fac_emp.S)} ha<br><small>${m2(a.fac_emp.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+    <tr><td>Marais-Shaw</td><td>${f(a.fac_ms.t)}</td><td>${m2(a.fac_ms.V)}</td>
+        <td>${ha(a.fac_ms.S)} ha<br><small>${m2(a.fac_ms.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+    <tr><td>Thirumurthi (d₁=${R.d1})</td><td>${f(a.fac_th.t)}</td><td>${m2(a.fac_th.V)}</td>
+        <td>${ha(a.fac_th.S)} ha<br><small>${m2(a.fac_th.S)} m²</small></td><td>${f(R.Se_obj,1)}</td></tr>
+  </table>
+  <h3 style="color:var(--t2);font-size:.82rem;margin:14px 0 8px">Totales combinados (ana + fac)</h3>
+  <table class="ct">
+    <tr><th>Combinación</th><th>Vol. total (m³)</th><th>Sup. total</th></tr>
+    <tr><td>Empírico Cv + Empírico CO<sub>adm</sub></td>
+        <td>${m2(a.ana_cv.V+a.fac_emp.V)}</td><td><span class="best">${ha(a.ana_cv.S+a.fac_emp.S)} ha</span></td></tr>
+    <tr><td>Empírico TRH + Empírico CO<sub>adm</sub></td>
+        <td>${m2(a.ana_trh.V+a.fac_emp.V)}</td><td>${ha(a.ana_trh.S+a.fac_emp.S)} ha</td></tr>
+    <tr><td>Vincent + Marais-Shaw</td>
+        <td>${m2(a.ana_vin.V+a.fac_ms.V)}</td><td>${ha(a.ana_vin.S+a.fac_ms.S)} ha</td></tr>
+    <tr><td>Vincent + Thirumurthi</td>
+        <td>${m2(a.ana_vin.V+a.fac_th.V)}</td><td>${ha(a.ana_vin.S+a.fac_th.S)} ha</td></tr>
+  </table>`;
+}
+
+// ── DETALLE FACULTATIVA ──
+function renderFacDetail(){
+  const Sa2 = SIS==='fac' ? R.Sa : R.aus.Sa2;
+  const emp  = SIS==='fac' ? R.fac.emp : R.aus.fac_emp;
+  const ms   = SIS==='fac' ? R.fac.ms  : R.aus.fac_ms;
+  const th   = SIS==='fac' ? R.fac.th  : R.aus.fac_th;
+  const hg   = SIS==='fac' ? R.fac.hg  : null;
+  const coAdmLbl=document.getElementById('coM').options[document.getElementById('coM').selectedIndex].text;
+  const CO_fac = SIS==='fac' ? R.CO : R.aus.CO_fac;
+
+  let html=`<p style="color:var(--muted);font-size:.78rem;margin-bottom:12px">
+    Sₐ=${f(Sa2,1)} mg/L · Se=${f(R.Se_obj,1)} mg/L · T=${R.T}°C · H=${R.hF} m · Q=${R.Q} m³/d</p>`;
+
+  // Empírico
+  html+=`<div class="mb">
+    <div class="mt">Método Empírico — Carga Orgánica Superficial <span class="badge be">EMPÍRICO</span></div>
+    <div class="fb">CO_adm (${coAdmLbl}) = ${f(R.coAdm,1)} kg DBO₅/ha·día
+A = CO_fac / CO_adm = ${f(CO_fac,1)} / ${f(R.coAdm,1)} = ${ha(emp.S)} ha = ${m2(emp.S)} m²
+V = A × H = ${m2(emp.V)} m³  |  TRH = ${f(emp.t)} días</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(emp.S),'ha = '+m2(emp.S)+' m²','g')}
+      ${rcell('Volumen',m2(emp.V),'m³')}
+      ${rcell('TRH',f(emp.t),'días')}
+    </div></div>`;
+
+  // H-G (solo facultativa directa)
+  if(hg){
+    html+=`<div class="mb">
+      <div class="mt">Hermann y Gloyna (E=90% fija) <span class="badge bh">ANALÍTICO</span></div>
+      <div class="fb">V = 0.035 × Q × Sₐ × θ^(35−T),  θ=1.085
+  = 0.035 × ${R.Q} × ${R.Sa} × 1.085^(35−${R.T})
+  = ${m2(hg.V)} m³
+TRH = V/Q = ${f(hg.t)} días  |  Se = Sₐ×0.10 = ${f(hg.Se,1)} mg/L  (E=90%)</div>
+      <div class="rg" style="margin-top:10px">
+        ${rcell('Superficie',ha(hg.S),'ha = '+m2(hg.S)+' m²','bl')}
+        ${rcell('Volumen',m2(hg.V),'m³')}
+        ${rcell('TRH',f(hg.t),'días (E=90%)')}
+      </div>
+      <div class="ib am">⚠️ Asume eficiencia=90% independientemente del objetivo. Úselo como verificación rápida.</div>
+    </div>`;
+  }
+
+  // Marais-Shaw
+  html+=`<div class="mb">
+    <div class="mt">Marais y Shaw — Mezcla completa 1er orden <span class="badge bm">ANALÍTICO</span></div>
+    <div class="fb">K₀ = 1.20 d⁻¹ (a T=35°C, Gloyna/ENOHSa)  |  θ = 1.085
+KT = K₀ × θ^(T−35) = 1.20 × 1.085^(${R.T}−35) = ${f(ms.KT,5)} d⁻¹
+Se = Sₐ / (1 + KT·t)  →  t = (Sₐ/Se − 1) / KT
+   = (${f(Sa2,1)}/${f(R.Se_obj,1)} − 1) / ${f(ms.KT,5)} = ${f(ms.t,2)} días
+V = Q × t = ${R.Q} × ${f(ms.t,2)} = ${m2(ms.V)} m³</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(ms.S),'ha = '+m2(ms.S)+' m²','g')}
+      ${rcell('Volumen',m2(ms.V),'m³')}
+      ${rcell('TRH',f(ms.t),'días')}
+      ${rcell('KT a '+R.T+'°C',f(ms.KT,5),'d⁻¹')}
+    </div></div>`;
+
+  // Thirumurthi
+  html+=`<div class="mb">
+    <div class="mt">Thirumurthi — Flujo disperso <span class="badge bt">ANALÍTICO</span></div>
+    <div class="fb">K₀ = 0.17 d⁻¹ (T=20°C, ENOHSa)  |  θ = 1.044  |  d₁ = ${R.d1}
+KT = 0.17 × 1.044^(${R.T}−20) = ${f(th.KT,5)} d⁻¹
+Se/Sₐ = [4·a·e^(1/2d₁)] / [(1+a)²·e^(a/2d₁)−(1−a)²·e^(−a/2d₁)]
+a = √(1 + 4·KT·t·d₁)  →  solución iterativa (bisección)
+TRH = ${f(th.t,2)} días  |  V = ${m2(th.V)} m³</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(th.S),'ha = '+m2(th.S)+' m²','am')}
+      ${rcell('Volumen',m2(th.V),'m³')}
+      ${rcell('TRH',f(th.t),'días')}
+      ${rcell('KT a '+R.T+'°C',f(th.KT,5),'d⁻¹')}
+    </div>
+    <div class="ib g">✅ Use Thirumurthi cuando el objetivo incluye remoción de coliformes (DBO + patógenos, ENOHSa 11.10.6.C.b). d₁ se determina con trazadores.</div>
+  </div>`;
+
+  return html;
+}
+
+// ── DETALLE ANAERÓBICA ──
+function renderAnaDetail(){
+  if(!R.aus) return '';
+  const a=R.aus;
+  return `
+  <p style="color:var(--muted);font-size:.78rem;margin-bottom:12px">
+    Sₐ=${f(R.Sa,1)} mg/L · Efic. ana=${a.efA}% → Se=${f(a.Se_ana,1)} mg/L · T=${R.T}°C · H=${f(a.hA,2)} m · Q=${R.Q} m³/d</p>
+
+  <div class="mb">
+    <div class="mt">Empírico — Carga Volumétrica Cv <span class="badge be">EMPÍRICO</span></div>
+    <div class="fb">V = CO_total / Cv = ${f(R.CO,1)} / ${f(a.cvA,3)} = ${m2(a.ana_cv.V)} m³
+S = V / H = ${m2(a.ana_cv.V)} / ${f(a.hA,2)} = ${m2(a.ana_cv.S)} m²
+TRH = V/Q = ${f(a.ana_cv.t,2)} días  (Cv rango ENOHSa: 0.050–0.080 kg/m³·d)</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(a.ana_cv.S),'ha = '+m2(a.ana_cv.S)+' m²','am')}
+      ${rcell('Volumen',m2(a.ana_cv.V),'m³')}
+      ${rcell('TRH',f(a.ana_cv.t),'días')}
+    </div>
+    ${a.ana_cv.S>5e4?`<div class="ib rd">⚠️ Superficie > 5 ha: excede límite ENOHSa 11.10.6.B. Ajuste Cv o profundidad.</div>`:''}
+  </div>
+
+  <div class="mb">
+    <div class="mt">Empírico — Tiempo de Retención Hidráulica <span class="badge be">EMPÍRICO</span></div>
+    <div class="fb">V = Q × t = ${R.Q} × ${f(a.tA)} = ${m2(a.ana_trh.V)} m³
+S = V / H = ${m2(a.ana_trh.V)} / ${f(a.hA,2)} = ${m2(a.ana_trh.S)} m²
+ENOHSa: TRH 4–6 días (14≤T≤20°C), 3–5 días (T≥20°C), Ef≤50–60%</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(a.ana_trh.S),'ha = '+m2(a.ana_trh.S)+' m²','am')}
+      ${rcell('Volumen',m2(a.ana_trh.V),'m³')}
+      ${rcell('TRH',f(a.tA),'días')}
+    </div>
+  </div>
+
+  <div class="mb">
+    <div class="mt">Modelo de Vincent <span class="badge bv">ANALÍTICO</span></div>
+    <div class="fb">Se = Sₐ / [Kn·(Se/Sₐ)^n·t + 1]  →  t = (Sₐ/Se − 1) / (Kn·(Se/Sₐ)^n)
+n=3.6,  Kn=38.5  (ENOHSa 11.10.6.B — valores aproximados)
+Se objetivo = ${f(a.Se_ana,1)} mg/L  (E=${a.efA}%)
+ratio = Se/Sₐ = ${f(a.Se_ana/R.Sa,4)}
+t = (${f(R.Sa,1)}/${f(a.Se_ana,1)}−1) / (38.5×${f(a.Se_ana/R.Sa,4)}^3.6) = ${f(a.ana_vin.t,2)} días
+V = ${m2(a.ana_vin.V)} m³</div>
+    <div class="rg" style="margin-top:10px">
+      ${rcell('Superficie',ha(a.ana_vin.S),'ha = '+m2(a.ana_vin.S)+' m²','bl')}
+      ${rcell('Volumen',m2(a.ana_vin.V),'m³')}
+      ${rcell('TRH',f(a.ana_vin.t),'días')}
+    </div>
+    <div class="ib am">⚠️ ENOHSa 11.10.6.B: Los valores n=3.6 y Kn=38.5 son <strong>sólo para verificación</strong> de otros métodos, no para diseño primario.</div>
+  </div>`;
+}
+
+// ── PARALELO FAC ──
+function renderParalelo(){
+  const Q2=R.Q/2;
+  const CO2=R.CO/2;
+  const Semp2=CO2/R.coAdm*1e4, Vemp2=Semp2*R.hF;
+  const ms2=MS(Q2,R.Sa,R.Se_obj,R.T); ms2.S=ms2.V/R.hF;
+  const th2=TH(Q2,R.Sa,R.Se_obj,R.T,R.d1); th2.S=th2.V/R.hF;
+  const hg2=HG(Q2,R.Sa,R.T); hg2.S=hg2.V/R.hF;
+
+  return `
+  <div class="ib g">📋 <span><strong>ENOHSa 11.10.5:</strong> Cuando la capacidad se distribuye entre ≥2 series paralelas, se requieren dispositivos de equirrepartición. Cada serie debe tratar el caudal del incremento de dotación/población previsto para <strong>5 años mínimo</strong>.</span></div>
+  <p style="color:var(--t2);font-size:.8rem;margin:12px 0 8px">2 series en paralelo → Q/serie = <strong>${f(Q2,1)} m³/d</strong> · CO/serie = ${f(CO2,1)} kg DBO₅/d. Las concentraciones Sₐ y Se no cambian.</p>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Vol./serie (m³)</th><th>Sup./serie</th><th>Sup. TOTAL ×2</th></tr>
+    <tr><td>Empírico CO<sub>adm</sub></td><td>${f(Vemp2/Q2)}</td><td>${m2(Vemp2)}</td>
+        <td>${ha(Semp2)} ha</td><td><strong>${ha(Semp2*2)} ha</strong></td></tr>
+    <tr><td>Marais-Shaw</td><td>${f(ms2.t)}</td><td>${m2(ms2.V)}</td>
+        <td>${ha(ms2.S)} ha</td><td><strong>${ha(ms2.S*2)} ha</strong></td></tr>
+    <tr><td>Thirumurthi (d₁=${R.d1})</td><td>${f(th2.t)}</td><td>${m2(th2.V)}</td>
+        <td>${ha(th2.S)} ha</td><td><strong>${ha(th2.S*2)} ha</strong></td></tr>
+    <tr><td>Hermann-Gloyna</td><td>${f(hg2.t)}</td><td>${m2(hg2.V)}</td>
+        <td>${ha(hg2.S)} ha</td><td><strong>${ha(hg2.S*2)} ha</strong></td></tr>
+  </table>
+  <div class="pc">
+    <div class="pt">⚡ Diseño por serie — Marais-Shaw (recomendado)</div>
+    <div class="rg">
+      ${rcell('Nº de series','2','paralelas ENOHSa')}
+      ${rcell('Q por serie',f(Q2,0),'m³/d')}
+      ${rcell('Sup. por serie',ha(ms2.S),'ha = '+m2(ms2.S)+' m²','g')}
+      ${rcell('Vol. por serie',m2(ms2.V),'m³','g')}
+      ${rcell('TRH',f(ms2.t),'días')}
+      ${rcell('Sup. TOTAL (2 lagunas)',ha(ms2.S*2),'ha','g')}
+    </div>
+  </div>
+  <div class="ib am" style="margin-top:12px">⏱️ <strong>ENOHSa 11.10.5.b:</strong> Cada serie dimensionada para el incremento de 5 años. Para proyección futura: calcule Q para años 5, 10 y 20 y dimensione series adicionales por período.</div>`;
+}
+
+// ── PARALELO AUS ──
+function renderParaleloAus(){
+  const a=R.aus, Q2=R.Q/2, CO2=R.CO/2;
+  const Vac2=CO2/a.cvA, Sac2=Vac2/a.hA;
+  const Vat2=Q2*a.tA,   Sat2=Vat2/a.hA;
+  const Sfe2=CO2*(1-a.efA/100)/R.coAdm*1e4, Vfe2=Sfe2*R.hF;
+  const ms2=MS(Q2,a.Sa2,R.Se_obj,R.T); ms2.S=ms2.V/R.hF;
+
+  return `
+  <div class="ib g">📋 <span><strong>ENOHSa 11.10.5:</strong> 2 series en paralelo con equirrepartición de caudales. Cada serie trata Q/2 = <strong>${f(Q2,1)} m³/d</strong>.</span></div>
+  <h3 style="color:var(--al);font-size:.8rem;margin:12px 0 8px">Anaeróbica — por serie</h3>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Vol./serie (m³)</th><th>Sup./serie</th><th>Total ×2</th></tr>
+    <tr><td>Empírico Cv</td><td>${f(Vac2/Q2)}</td><td>${m2(Vac2)}</td><td>${ha(Sac2)} ha</td><td><strong>${ha(Sac2*2)} ha</strong></td></tr>
+    <tr><td>Empírico TRH</td><td>${f(a.tA)}</td><td>${m2(Vat2)}</td><td>${ha(Sat2)} ha</td><td><strong>${ha(Sat2*2)} ha</strong></td></tr>
+  </table>
+  <h3 style="color:var(--gl);font-size:.8rem;margin:12px 0 8px">Facultativa — por serie</h3>
+  <table class="ct">
+    <tr><th>Método</th><th>TRH (días)</th><th>Vol./serie (m³)</th><th>Sup./serie</th><th>Total ×2</th></tr>
+    <tr><td>Empírico CO<sub>adm</sub></td><td>${f(Vfe2/Q2)}</td><td>${m2(Vfe2)}</td><td>${ha(Sfe2)} ha</td><td><strong>${ha(Sfe2*2)} ha</strong></td></tr>
+    <tr><td>Marais-Shaw</td><td>${f(ms2.t)}</td><td>${m2(ms2.V)}</td><td>${ha(ms2.S)} ha</td><td><strong>${ha(ms2.S*2)} ha</strong></td></tr>
+  </table>
+  <div class="pc">
+    <div class="pt">⚡ Configuración recomendada — Empírico Cv + Empírico CO_adm</div>
+    <div class="rg">
+      ${rcell('Nº de series','2','paralelas')}
+      ${rcell('Q por serie',f(Q2,0),'m³/d')}
+      ${rcell('Ana: Sup./serie',ha(Sac2),'ha = '+m2(Sac2)+' m²','am')}
+      ${rcell('Ana: Vol./serie',m2(Vac2),'m³','am')}
+      ${rcell('Fac: Sup./serie',ha(Sfe2),'ha = '+m2(Sfe2)+' m²','g')}
+      ${rcell('Fac: Vol./serie',m2(Vfe2),'m³','g')}
+      ${rcell('Sup. total 2 series',ha((Sac2+Sfe2)*2),'ha (ana+fac × 2)','g')}
+      ${rcell('Vol. total',m2((Vac2+Vfe2)*2),'m³','g')}
+    </div>
+  </div>`;
+}
+
+// ── ESQUEMA SVG ──
+function renderEsquema(){
+  const W=680, H=300, pad=28, bH=150, y0=65;
+  let s='', coAdmLbl=document.getElementById('coM').options[document.getElementById('coM').selectedIndex].text;
+
+  if(SIS==='fac'){
+    const ms=R.fac.ms, bW=W-2*pad;
+    const Q2=R.Q/2, ms2=MS(Q2,R.Sa,R.Se_obj,R.T); ms2.S=ms2.V/R.hF;
+    s=`
+      <rect x="${pad}" y="${y0}" width="${bW}" height="${bH}" fill="#1b3a1b" stroke="#4caf50" stroke-width="2" rx="8"/>
+      <text x="${pad+bW/2}" y="${y0+26}" text-anchor="middle" fill="#a5d6a7" font-size="13" font-weight="bold">LAGUNA FACULTATIVA</text>
+      <text x="${pad+bW/2}" y="${y0+46}" text-anchor="middle" fill="#81c784" font-size="11">${ha(ms.S)} ha · ${m2(ms.V)} m³  (Marais-Shaw)</text>
+      <text x="${pad+bW/2}" y="${y0+63}" text-anchor="middle" fill="#81c784" font-size="11">TRH = ${f(ms.t,1)} días · H = ${R.hF} m</text>
+      <text x="${pad+bW/2}" y="${y0+80}" text-anchor="middle" fill="#558b55" font-size="10">Q = ${R.Q} m³/d · CO_adm (${coAdmLbl}) = ${f(R.coAdm,1)} kg/ha·d</text>
+      <line x1="8" y1="${y0+bH/2}" x2="${pad}" y2="${y0+bH/2}" stroke="#4caf50" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="${pad+bW}" y1="${y0+bH/2}" x2="${W-8}" y2="${y0+bH/2}" stroke="#4caf50" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="6" y="${y0+bH/2-7}" fill="#4caf50" font-size="9">Afluente</text>
+      <text x="6" y="${y0+bH/2+13}" fill="#558b55" font-size="9">Sₐ=${R.Sa} mg/L</text>
+      <text x="${W-6}" y="${y0+bH/2-7}" fill="#4caf50" font-size="9" text-anchor="end">Efluente</text>
+      <text x="${W-6}" y="${y0+bH/2+13}" fill="#558b55" font-size="9" text-anchor="end">Se=${f(R.Se_obj,1)} mg/L</text>
+      <text x="${W/2}" y="${y0+bH+26}" text-anchor="middle" fill="#558b55" font-size="10">2 series paralelas (ENOHSa 11.10.5): Q/serie=${f(Q2,0)} m³/d · S/serie=${ha(ms2.S)} ha · V/serie=${m2(ms2.V)} m³</text>`;
+  } else {
+    const a=R.aus;
+    const totS=a.ana_cv.S+a.fac_emp.S;
+    const aW=Math.round((a.ana_cv.S/totS)*(W-2*pad-16));
+    const fW=W-2*pad-16-aW;
+    const xa=pad, xf=pad+aW+16;
+    s=`
+      <rect x="${xa}" y="${y0}" width="${aW}" height="${bH}" fill="#1a1400" stroke="#ffb300" stroke-width="2" rx="8"/>
+      <text x="${xa+aW/2}" y="${y0+24}" text-anchor="middle" fill="#ffe082" font-size="12" font-weight="bold">ANAERÓBICA</text>
+      <text x="${xa+aW/2}" y="${y0+42}" text-anchor="middle" fill="#ffcc80" font-size="10">${ha(a.ana_cv.S)} ha · ${m2(a.ana_cv.V)} m³</text>
+      <text x="${xa+aW/2}" y="${y0+57}" text-anchor="middle" fill="#ffcc80" font-size="10">TRH ${f(a.ana_cv.t,1)} d · H=${f(a.hA,1)} m</text>
+      <text x="${xa+aW/2}" y="${y0+72}" text-anchor="middle" fill="#8a7000" font-size="9">Cv=${a.cvA} kg/m³·d</text>
+      <rect x="${xf}" y="${y0}" width="${fW}" height="${bH}" fill="#1b3a1b" stroke="#4caf50" stroke-width="2" rx="8"/>
+      <text x="${xf+fW/2}" y="${y0+24}" text-anchor="middle" fill="#a5d6a7" font-size="12" font-weight="bold">FACULTATIVA</text>
+      <text x="${xf+fW/2}" y="${y0+42}" text-anchor="middle" fill="#81c784" font-size="10">${ha(a.fac_emp.S)} ha · ${m2(a.fac_emp.V)} m³ (emp)</text>
+      <text x="${xf+fW/2}" y="${y0+57}" text-anchor="middle" fill="#81c784" font-size="10">${ha(a.fac_ms.S)} ha · ${m2(a.fac_ms.V)} m³ (M-S)</text>
+      <text x="${xf+fW/2}" y="${y0+72}" text-anchor="middle" fill="#558b55" font-size="9">TRH ${f(a.fac_ms.t,1)} d · H=${R.hF} m</text>
+      <text x="${xf+fW/2}" y="${y0+87}" text-anchor="middle" fill="#2e6b2e" font-size="9">Sₐ=${f(a.Sa2,1)}→Se=${f(R.Se_obj,1)} mg/L</text>
+      <line x1="6" y1="${y0+bH/2}" x2="${xa}" y2="${y0+bH/2}" stroke="#ffb300" stroke-width="2" marker-end="url(#arA)"/>
+      <line x1="${xa+aW}" y1="${y0+bH/2}" x2="${xf}" y2="${y0+bH/2}" stroke="#ffb300" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arA)"/>
+      <line x1="${xf+fW}" y1="${y0+bH/2}" x2="${W-6}" y2="${y0+bH/2}" stroke="#4caf50" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="4" y="${y0+bH/2-7}" fill="#ffb300" font-size="9">Afluente</text>
+      <text x="4" y="${y0+bH/2+12}" fill="#8a7000" font-size="9">Sₐ=${R.Sa}</text>
+      <text x="${W-4}" y="${y0+bH/2-7}" fill="#4caf50" font-size="9" text-anchor="end">Efluente</text>
+      <text x="${W-4}" y="${y0+bH/2+12}" fill="#2e6b2e" font-size="9" text-anchor="end">Se=${f(R.Se_obj,1)}</text>
+      <text x="${W/2}" y="${y0+bH+26}" text-anchor="middle" fill="#558b55" font-size="10">
+        2 series en paralelo · Q/serie=${f(R.Q/2,0)} m³/d
+      </text>
+      <text x="${W/2}" y="${y0+bH+42}" text-anchor="middle" fill="#a5d6a7" font-size="10">
+        Ana/serie: ${ha(a.ana_cv.S/2)} ha · Fac/serie: ${ha(a.fac_emp.S/2)} ha · Total: ${ha((a.ana_cv.S+a.fac_emp.S))} ha (1 serie)
+      </text>`;
+  }
+
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:#0a180a;border-radius:8px;padding:8px">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#4caf50"/></marker>
+      <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#ffb300"/></marker>
+    </defs>
+    <text x="${W/2}" y="20" text-anchor="middle" fill="#a5d6a7" font-size="13" font-weight="bold">
+      ${SIS==='fac'?'Laguna Facultativa Directa':'Sistema Australiano: Anaeróbica + Facultativa'}
+    </text>
+    <text x="${W/2}" y="37" text-anchor="middle" fill="#558b55" font-size="10">
+      P=${R.P} hab · Q=${R.Q} m³/d · T=${R.T}°C · E=${R.efT}%
+    </text>
+    ${s}
+  </svg>`;
+}
+
+// ── Ejemplo ──
+function ejemplo(){
+  document.getElementById('pop').value=5000;
+  document.getElementById('cu').value=0.055;
+  document.getElementById('Q').value=750;
+  document.getElementById('T').value=15;
+  document.getElementById('Sa').value=300;
+  document.getElementById('efT').value=80;
+  document.getElementById('hF').value=1.80;
+  document.getElementById('coM').value='manual';
+  document.getElementById('coMan').value=100;
+  document.getElementById('coMF').style.display='';
+  document.getElementById('d1').value=0.3;
+  if(SIS==='aus'){
+    document.getElementById('hA').value=3.00;
+    document.getElementById('cv').value=0.050;
+    document.getElementById('efA').value=50;
+    document.getElementById('tA').value=5;
+  }
+}
+
+setSistema('fac');
+</script>
+</body>
+</html>
+
+</body></html>
